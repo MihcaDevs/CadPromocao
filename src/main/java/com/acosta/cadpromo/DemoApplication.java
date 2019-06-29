@@ -21,8 +21,11 @@ public class DemoApplication implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception {
 		
-		SocialMetaTag tag = service.getOpenGraphByUrl("https://www.udemy.com/spring-boot-mvc-com-thymeleaf/");
-		System.out.println(tag.toString());
+		SocialMetaTag og = service.getOpenGraphByUrl("https://www.udemy.com/spring-boot-mvc-com-thymeleaf/");
+		System.out.println(og.toString());
+		
+		SocialMetaTag twitter = service. getTwitterCardByUrl("https://www.udemy.com/spring-boot-mvc-com-thymeleaf/");
+		System.out.println(twitter.toString());
 		
 	}
 }
