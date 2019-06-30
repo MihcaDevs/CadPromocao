@@ -21,8 +21,7 @@ public class DemoApplication implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception {
 		
-		SocialMetaTag tag = service.getSocialMetaTagByUrl("https://www.udemy.com/spring-boot-mvc-com-thymeleaf/");
-		System.out.println(tag.toString());
+		
 		
 	}
 }
