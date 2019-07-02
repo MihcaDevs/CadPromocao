@@ -45,6 +45,7 @@ $("#form-add-promo").submit(function(evt) {
 
 
 
+
 //funcao para capturar as meta tags
 $("#linkPromocao").on('change', function() {
 
@@ -57,7 +58,7 @@ $("#linkPromocao").on('change', function() {
 			url: "/meta/info?url=" + url,
 			cache: false,
 			beforeSend: function() {
-				$("#alert").removeClass("alert alert-danger").text('');
+				$("#alert").removeClass("alert alert-danger alert-success").text('');
 				$("#titulo").val("");
 				$("#site").text("");
 				$("#linkImagem").attr("src", "");
