@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.slf4j.Logger;
@@ -26,8 +27,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.acosta.cadpromo.domain.Categoria;
 import com.acosta.cadpromo.domain.Promocao;
+import com.acosta.cadpromo.dto.PromocaoDTO;
 import com.acosta.cadpromo.repository.CategoriaRepository;
 import com.acosta.cadpromo.repository.PromocaoRepository;
+import com.acosta.cadpromo.service.PromocaoDataTablesService;
+
 
 
 @Controller
@@ -40,8 +44,56 @@ public class PromocaoController {
     private PromocaoRepository promocaoRepository;
 	@Autowired
 	private CategoriaRepository categoriaRepository;
+
+	// ======================================DATATABLES===============================================	
 	
-	// ======================================AUTOCOMPLETE===============================================
+	@GetMapping("/tabela")
+	public String showTabela( ) {
+		return "promo-datatables";
+	}
+	
+	@GetMapping("/datatables/server")
+	public ResponseEntity<?> datatables(HttpServletRequest request) {
+		Map<String, Object> data = new PromocaoDataTablesService().execute(promocaoRepository, request);
+		return ResponseEntity.ok(data);
+	}
+	
+	@GetMapping("/delete/{id}")
+	public ResponseEntity<?> excluirPromocao(@PathVariable("id") Long id) {
+		promocaoRepository.deleteById(id);
+		return ResponseEntity.ok().build();
+	}
+	
+	@GetMapping("/edit/{id}")
+	public ResponseEntity<?> preEditarPromocao(@PathVariable("id") Long id) {
+		Promocao promo = promocaoRepository.findById(id).get();
+		return ResponseEntity.ok(promo);
+	}
+	
+	@PostMapping("/edit")
+	public ResponseEntity<?> editarPromocao(@Valid PromocaoDTO dto, BindingResult result) {
+		log.info(dto.toString());
+		if (result.hasErrors()) {			
+			Map<String, String> errors = new HashMap<>();
+			for (FieldError error : result.getFieldErrors()) {
+				errors.put(error.getField(), error.getDefaultMessage());
+			}			
+			return ResponseEntity.unprocessableEntity().body(errors);
+		}
+		
+		Promocao promo = promocaoRepository.findById(dto.getId()).get();
+		promo.setCategoria(dto.getCategoria());
+		promo.setDescricao(dto.getDescricao());
+		promo.setLinkImagem(dto.getLinkImagem());
+		promo.setPreco(dto.getPreco());
+		promo.setTitulo(dto.getTitulo());
+		
+		promocaoRepository.save(promo);
+		
+		return ResponseEntity.ok().build();
+	}
+	
+	// ======================================AUTOCOMPLETE=============================================
 	
 	@GetMapping("/site")
 	public ResponseEntity<?> autocompleteByTermo(@RequestParam("termo") String termo) {
